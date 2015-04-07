@@ -45,7 +45,7 @@ public class AppMain {
             printSpeedInfo(speedInfo);
             if(argcmd.hasOption("i"))return;
             SpeedBooster speedBooster = new SpeedBooster(speedInfo);
-            if(argcmd.hasOption("x")&&(!speedInfo.isBoosting()))
+            if(argcmd.hasOption("x")&&(speedInfo.isBoosting()))
             {
                 log("Stop boosting...");
                 speedBooster.stopBoost();
