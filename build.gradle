@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 
 mainClassName = 'com.tobyxdd.openWokuan.AppMain'
-version = '1.0'
+version = '1.1'
 
 repositories {
     mavenCentral()
@@ -27,7 +27,7 @@ task runHelp (type:JavaExec) {
 
 jar {
     baseName = 'openWokuan'
-    version = '1.0.0'
+    version = '1.1.0'
     manifest {
         attributes 'Main-Class': mainClassName
     }

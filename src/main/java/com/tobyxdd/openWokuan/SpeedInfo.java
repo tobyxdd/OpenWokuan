@@ -96,7 +96,7 @@ public class SpeedInfo {
     private String oldSpeedID;
     private String upSpeedID;
 
-    private int oldSpeed,upSpeed,ranNum;
+    private int oldSpeed, upSpeed, ranNum;
     private float hoursLeft;
     private boolean isBoosting;
 
@@ -113,70 +113,66 @@ public class SpeedInfo {
     private String cID = genCompID();
     private String accID;
 
-    public SpeedInfo(String argAccID) throws UnirestException,HttpResponseException {
+    public SpeedInfo(String argAccID) throws UnirestException, HttpResponseException {
         accID = argAccID;
         refreshInfo();
     }
 
-    public void refreshInfo() throws UnirestException,HttpResponseException
-    {
+    public void refreshInfo() throws UnirestException, HttpResponseException {
         HttpResponse<String> infoResp = Unirest.get("http://bj.wokuan.cn/web/startenrequest.php?ComputerMac={ComputerMac}&ADSLTxt={ADSLTxt}&Type=2&reqsn={reqsn}&oem=00&ComputerId={ComputerId}")
                 .routeParam("ComputerMac", rMac)
                 .routeParam("ADSLTxt", accID)
-                .routeParam("reqsn",genReqSN())
+                .routeParam("reqsn", genReqSN())
                 .routeParam("ComputerId", cID)
                 .header("Accept", SpeedBooster.httpAccept)
                 .header("Accept-Language", SpeedBooster.httpLang)
                 .header("User-Agent", SpeedBooster.httpUA)
                 .asString();
-        if(infoResp.getStatus()==200)
-        {
+        if (infoResp.getStatus() == 200) {
             Document respDoc = Jsoup.parse(infoResp.getBody());
             String[] respArgs = respDoc.getElementById("webcode").text().split("&");
-            for (String it : respArgs)
-            {
+            for (String it : respArgs) {
                 String[] kp = it.split("=");
-                if(kp[0].equalsIgnoreCase("ov"))actionStatus=kp[1];
-                if(kp[0].equalsIgnoreCase("os"))oldSpeed=Integer.parseInt(kp[1]);
-                if(kp[0].equalsIgnoreCase("up"))upSpeed=Integer.parseInt(kp[1]);
-                if(kp[0].equalsIgnoreCase("glst"))hoursLeft=Float.parseFloat(kp[1]);
-                if(kp[0].equalsIgnoreCase("gus"))upSpeedID=kp[1];
-                if(kp[0].equalsIgnoreCase("old"))oldSpeedID=kp[1];
-                if(kp[0].equalsIgnoreCase("cn"))accID=kp[1];//*
-                if(kp[0].equalsIgnoreCase("stu"))isBoosting=kp[1].equals("1");
-                if(kp[0].equalsIgnoreCase("random"))ranNum=Integer.parseInt(kp[1]);
+                if (kp[0].equalsIgnoreCase("ov")) actionStatus = kp[1];
+                if (kp[0].equalsIgnoreCase("os")) oldSpeed = Integer.parseInt(kp[1]);
+                if (kp[0].equalsIgnoreCase("up")) upSpeed = Integer.parseInt(kp[1]);
+                if (kp[0].equalsIgnoreCase("glst")) hoursLeft = Float.parseFloat(kp[1]);
+                if (kp[0].equalsIgnoreCase("gus")) upSpeedID = kp[1];
+                if (kp[0].equalsIgnoreCase("old")) oldSpeedID = kp[1];
+                if (kp[0].equalsIgnoreCase("cn")) accID = kp[1];//*
+                if (kp[0].equalsIgnoreCase("stu")) isBoosting = kp[1].equals("1");
+                if (kp[0].equalsIgnoreCase("random")) ranNum = Integer.parseInt(kp[1]);
             }
-        }else
-            throw new HttpResponseException(infoResp.getStatus(),infoResp.getStatusText());
+        } else
+            throw new HttpResponseException(infoResp.getStatus(), infoResp.getStatusText());
     }
 
-    private String randomMAC(){
+    private String randomMAC() {
         Random rand = new Random();
         byte[] macAddr = new byte[6];
         rand.nextBytes(macAddr);
-        macAddr[0] = (byte)(macAddr[0] & (byte)254);
+        macAddr[0] = (byte) (macAddr[0] & (byte) 254);
         StringBuilder sb = new StringBuilder(18);
-        for(byte b : macAddr){
-            if(sb.length() > 0)
+        for (byte b : macAddr) {
+            if (sb.length() > 0)
                 sb.append("-");
             sb.append(String.format("%02x", b));
         }
         return sb.toString().toUpperCase();
     }
 
-    private String genReqSN()
-    {
-        return "00TF"+df.format(Calendar.getInstance().getTime())+"009262";
+    private String genReqSN() {
+        return "00TF" + df.format(Calendar.getInstance().getTime()) + "009262";
     }
-    private String genCompID()
-    {
+
+    private String genCompID() {
         StringBuilder bd = new StringBuilder("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ");
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
         int range = bd.length();
-        for (int i = 0; i < 18; i ++) {
+        for (int i = 0; i < 18; i++) {
             sb.append(bd.charAt(random.nextInt(range)));
         }
-        return "BFEBFBFF"+sb.toString();
+        return "BFEBFBFF" + sb.toString();
     }
 }
